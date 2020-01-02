@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+func recovery() { if recv:= recover(); recv != nil {fmt.Println(recv); os.Exit(1)} }
+
 func disconecter(err error, conn net.Conn) {
 	if err != nil {
 		conn.Close()
@@ -15,6 +17,7 @@ func disconecter(err error, conn net.Conn) {
 }
 
 func get(conn net.Conn, login string) {
+	defer recovery()
 	buf:= make([]byte, 256)
 	for {
 		size, err:= bufio.NewReader(conn).Read(buf)
@@ -24,6 +27,7 @@ func get(conn net.Conn, login string) {
 }
 
 func send(conn net.Conn, login string) {
+	defer recovery()
 	for {
 		mess, _:= bufio.NewReader(os.Stdin).ReadString('\n')
 		conn.Write([]byte(fmt.Sprintf("%s:%s", login, mess)))

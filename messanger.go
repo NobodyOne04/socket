@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"sync"
 	"./server"
 	"./client"
@@ -16,10 +15,7 @@ var (
 	waitGroup sync.WaitGroup
 )
 
-func recovery() { if recv:= recover(); recv != nil {fmt.Println(recv)} }
-
 func main() {
-	defer recovery()
 	flag.Parse()
 	if *asserver {
 		waitGroup.Add(1)
