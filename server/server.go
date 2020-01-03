@@ -68,11 +68,11 @@ func send() {
 	}
 }
 
-func StartServer(host string, port int){
+func StartServer(host string, port int, client_number int){
 	fmt.Println("[SERVER WAS STARTED]")
 	listen, _:= net.Listen("tcp", fmt.Sprintf("%s:%d", host, port))
 	go send()
-	for {
+	for len(connection) < client_number {
 		loginBuf, buf:= make([]byte, 256), make([]byte, 256)
 		conn, _:= listen.Accept()
 		size, _:= bufio.NewReader(conn).Read(buf)
