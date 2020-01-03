@@ -10,8 +10,8 @@ import (
 var (
 	host     = flag.String("h", "localhost", "host")
 	port     = flag.Int("p", 9090, "port")
-	asserver   = flag.Bool("s",false,"Start as server")
-	serverIP = flag.String("ip","127.0.0.1","Server ip")
+	asserver = flag.Bool("s", false, "Start as server")
+	serverIP = flag.String("ip", "127.0.0.1", "Server ip")
 	waitGroup sync.WaitGroup
 )
 
