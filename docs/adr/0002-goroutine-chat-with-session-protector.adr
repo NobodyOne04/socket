@@ -1,0 +1,27 @@
+# 0002. Goroutine TCP chat with a rotating session-key protector
+
+- Status: Accepted
+- Date: 2026-11-19
+
+The lab's chat relays messages between a fixed number of clients, and every message carries a
+session key both sides advance, so a hijacked or out-of-sync client is disconnected.
+
+## Technical details
+- **Server**: listens on `-h:-p`, accepts until `-n` clients have joined. On connect it reads
+  `hash\nkey`, asks `ENTER YOUR LOGIN : `, stores the connection with a `SessionProtector`
+  for that hash, and starts a reader goroutine. One `send()` goroutine delivers each queued
+  message to every client except its author.
+- **Wire format**: plain text, 256-byte reads: client → server `key\nlogin:message`, server →
+  client `key\nmessage`.
+- **Protector**: `Get_hash_str()` is 5 digits (1-6), `Get_session_key()` 10 digits (1-9).
+  `Next_session_key` sums one transformation of the key per hash digit (mod 97 of the first
+  half, reverse, rotate, digit sums, XOR 43) and keeps 10 digits. A mismatch closes the
+  connection.
+- **Known limits**: shared slices without locks; fixed 256-byte reads can split messages;
+  `math/rand` without a seed; the hash goes in plaintext. Fixed in the Rust rewrite
+  (TCP-messanger), not here.
+
+## Technologies and alternatives
+- Involved: Go standard library (`net`, `bufio`, `flag`, `sync`), GOPATH build.
+- Alternatives: TLS (the real answer; not the lab's subject); channels instead of shared
+  slices (would fix the races; out of scope for an archived lab).
